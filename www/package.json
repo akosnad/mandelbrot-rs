@@ -1,0 +1,19 @@
+{
+  "name": "mandelbrot-rs-web",
+  "version": "0.1.0",
+  "description": "Mandelbrot in rust WASM",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "start": "webpack serve"
+  },
+  "devDependencies": {
+    "webpack-dev-server": "^4.3.0"
+  },
+  "dependencies": {
+    "copy-webpack-plugin": "^6",
+    "webpack": "^5",
+    "webpack-cli": "^4",
+    "mandelbrot-rs": "file:../pkg"
+  }
+}
