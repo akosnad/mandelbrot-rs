@@ -2,9 +2,6 @@ pub fn render(iter_max: usize) {
     let c = crate::utils::context();
     let (w, h) = (crate::utils::canvas().width(), crate::utils::canvas().height());
 
-    c.set_fill_style(&"black".into());
-    c.fill_rect(0., 0., w as f64, h as f64);
-
     for j in 0..h {
         for i in 0..w {
             let cx = i as f64 / w as f64 / 3.0 * 10.0 - 2.5;
