@@ -1,4 +1,5 @@
-mod utils;
+pub mod utils;
+mod mandelbrot;
 
 use wasm_bindgen::prelude::*;
 
@@ -21,5 +22,6 @@ pub fn greet() {
 #[wasm_bindgen]
 pub async fn run() {
     utils::set_panic_hook();
-    greet();
+
+    mandelbrot::render(100);
 }
