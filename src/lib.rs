@@ -10,18 +10,6 @@ use wasm_bindgen::prelude::*;
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 #[wasm_bindgen]
-extern {
-    fn alert(s: &str);
-}
-
-#[wasm_bindgen]
-pub fn greet() {
-    alert("Hello, mandelbrot-rs!");
-}
-
-#[wasm_bindgen]
-pub async fn run() {
+pub fn init() {
     utils::set_panic_hook();
-
-    mandelbrot::render(100);
 }

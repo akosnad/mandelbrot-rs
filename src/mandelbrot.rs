@@ -1,6 +1,12 @@
-pub fn render(iter_max: usize) {
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+#[allow(dead_code)]
+pub async fn render(iter_max: usize) {
     let c = crate::utils::context();
-    let (w, h) = (crate::utils::canvas().width(), crate::utils::canvas().height());
+    let (w, h) = (crate::utils::canvas().width() as usize, crate::utils::canvas().height() as usize);
+    let mut buf = vec![vec![0; h]; w];
+    let mut most_iterations = 0;
 
     for j in 0..h {
         for i in 0..w {
@@ -16,9 +22,29 @@ pub fn render(iter_max: usize) {
                 x = x_temp;
                 iter += 1;
             }
+            if iter > most_iterations {
+                most_iterations = iter;
+            }
 
-            let intensity = iter as f64 / iter_max as f64;
-            c.set_fill_style(&format!("rgb({c}, {c}, {c})", c=(intensity * 255.) as usize).as_str().into());
+            buf[i][j] = iter;
+        }
+    }
+
+    for j in 0..h {
+        for i in 0..w {
+            let intensity = if buf[i][j] == iter_max {
+                    0.
+                } else {
+                    buf[i][j] as f64 / iter_max as f64
+                };
+            c.set_fill_style(
+                &format!(
+                    "hsl({h}, {s}%, {l}%)",
+                    h=intensity * 360.,
+                    s=100.,
+                    l=intensity * 100.,
+                ).as_str().into()
+            );
             c.fill_rect(i as f64, j as f64, 1., 1.,)
         }
     }
