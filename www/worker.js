@@ -11,7 +11,7 @@ function wrapExports({ render }, parallel) {
 async function initHandlers() {
   let [singleThread, multiThread] = await Promise.all([
     (async () => {
-      const singleThread = await import("mandelbrot-rs");
+      const singleThread = await import("../pkg");
       await singleThread.default();
       singleThread.set_panic_hook();
       return wrapExports(singleThread, false);
@@ -19,7 +19,7 @@ async function initHandlers() {
     (async () => {
       // If threads are unsupported in this browser, skip this handler.
       if (!(await threads())) return;
-      const multiThread = await import("mandelbrot-rs");
+      const multiThread = await import("../pkg");
       await multiThread.default();
       await multiThread.initThreadPool(navigator.hardwareConcurrency);
       multiThread.set_panic_hook();
