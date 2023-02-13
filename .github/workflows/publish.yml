@@ -15,20 +15,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - name: wasm-pack-action
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Install wasm-pack
         uses: jetli/wasm-pack-action@v0.4.0
       - name: Build WASM
         run: wasm-pack build --release --target web
-      - uses: actions/setup-node@v3
+      - name: Install Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: "18"
-      - run: npm ci
+      - name: Install npm dependencies
+        run: npm ci
         working-directory: www
       - name: Build webpack project
         run: npm run build:prod --production
         working-directory: www
-      - uses: easingthemes/ssh-deploy@4.0.5
+      - name: Deploy
+        uses: easingthemes/ssh-deploy@v4.0.5
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
           ARGS: "-rlDzv"
