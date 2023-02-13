@@ -5,17 +5,19 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --config webpack.config.js",
+    "build:prod": "webpack --config webpack.config.js --mode production",
     "start": "webpack serve"
   },
   "devDependencies": {
-    "webpack-dev-server": "^4.3.0"
+    "html-minimizer-webpack-plugin": "^4.3.0",
+    "webpack-cli": "^4",
+    "copy-webpack-plugin": "^6",
+    "webpack-dev-server": "^4.3.0",
+    "webpack": "^5"
   },
   "dependencies": {
     "comlink": "^4.3",
-    "copy-webpack-plugin": "^6",
     "mandelbrot-rs": "file:../pkg",
-    "wasm-feature-detect": "^1.5.0",
-    "webpack": "^5",
-    "webpack-cli": "^4"
+    "wasm-feature-detect": "^1.5.0"
   }
 }

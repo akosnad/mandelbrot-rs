@@ -1,3 +1,4 @@
+const HTMLMinimizerPlugin = require("html-minimizer-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const path = require("path");
 module.exports = {
@@ -12,27 +13,15 @@ module.exports = {
   mode: "development",
   plugins: [
     new CopyWebpackPlugin({
-      patterns: [
-        { from: "index.html", to: "." },
-        //        { from: "worker.js", to: "." },
-      ],
+      patterns: [{ from: "index.html", to: "." }],
     }),
   ],
   module: {
     rules: [
-      /*
       {
-        test: /worker\.js$/i,
-        use: [
-          {
-            loader: "comlink-loader",
-            options: {
-              singleton: true,
-            },
-          },
-        ],
+        test: /\.html$/i,
+        type: "asset/resource",
       },
-      */
     ],
   },
   devServer: {
@@ -43,5 +32,8 @@ module.exports = {
   },
   stats: {
     children: true,
+  },
+  optimization: {
+    minimizer: [new HTMLMinimizerPlugin()],
   },
 };
