@@ -1,37 +1,48 @@
-import * as wasm from "mandelbrot-rs";
+import * as Comlink from "comlink";
 
+async function render(ctx, handlers, width, height, maxIter) {
+  ctx.fillStyle = "white";
+  ctx.font = "30px monospace";
+  ctx.fillText("Rendering...", 10, 50);
 
-let canvas = document.getElementById('render-canvas');
-let ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth * window.devicePixelRatio;
-canvas.height = window.innerHeight * window.devicePixelRatio;
+  let handler = handlers.supportsThreads
+    ? handlers.multiThread
+    : handlers.singleThread;
 
-window.addEventListener('resize', () => {
+  let data = await handler({
+    width,
+    height,
+    maxIter,
+  });
+
+  const imageData = new ImageData(data, width, height);
+  ctx.putImageData(imageData, 0, 0);
+}
+
+(async () => {
+  let canvas = document.getElementById("render-canvas");
+  let ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth * window.devicePixelRatio;
+  canvas.height = window.innerHeight * window.devicePixelRatio;
+
+  let worker = Comlink.wrap(
+    new Worker(new URL("./worker.js", import.meta.url), { type: "module" })
+  );
+  let handlers = await worker.handlers;
+
+  let lastResize = 0;
+  window.addEventListener("resize", () => {
+    if (new Date() - lastResize < 1000) {
+      return;
+    }
+
     canvas.width = window.innerWidth * window.devicePixelRatio;
     canvas.height = window.innerHeight * window.devicePixelRatio;
-});
 
+    render(ctx, handlers, canvas.width, canvas.height, 100);
 
-let iter_slider = document.getElementById('iter-slider');
-let iter_input = document.getElementById('iter-input');
-let render = document.getElementById('render');
+    lastResize = new Date();
+  });
 
-iter_slider.addEventListener('input', () => {
-    iter_input.value = iter_slider.value;
-});
-
-iter_input.addEventListener('input', () => {
-    if (iter_input.value > parseInt(iter_input.max)) {
-        iter_input.value = iter_input.max;
-    } else if (iter_input.value < parseInt(iter_input.min)) {
-        iter_input.value = iter_input.min;
-    }
-    iter_slider.value = iter_input.value;
-});
-
-render.addEventListener('click', () => {
-    wasm.render(parseInt(iter_input.value));
-});
-
-wasm.init();
-wasm.render(parseInt(iter_input.value));
+  render(ctx, handlers, canvas.width, canvas.height, 100);
+})();
