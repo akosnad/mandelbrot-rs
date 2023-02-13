@@ -2,9 +2,10 @@ name: Publish
 
 on:
   push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+    paths:
+      - src/**
+      - www/**
+      - .github/workflows/**
 
 env:
   CARGO_TERM_COLOR: always
@@ -14,12 +15,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: wasm-pack-action
-        uses: jetli/wasm-pack-action@v0.3.0
+        uses: jetli/wasm-pack-action@v0.4.0
       - name: Build WASM
         run: wasm-pack build --release --target web
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: "18"
       - run: npm ci
@@ -27,7 +28,7 @@ jobs:
       - name: Build webpack project
         run: npm run build:prod --production
         working-directory: www
-      - uses: easingthemes/ssh-deploy@main
+      - uses: easingthemes/ssh-deploy@4.0.5
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
           ARGS: "-rlDzv"
